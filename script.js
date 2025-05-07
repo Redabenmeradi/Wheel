@@ -60,17 +60,29 @@ class Wheel {
             // Draw text
             this.ctx.save();
             this.ctx.translate(centerX, centerY);
-            this.ctx.rotate(startAngle + sliceAngle / 2);
-            this.ctx.textAlign = 'right';
+            const textAngle = startAngle + sliceAngle / 2;
+            this.ctx.rotate(textAngle);
+            
+            // Position text in the middle of the slice
+            const textRadius = radius * 0.7; // Position text at 70% of the radius
+            this.ctx.translate(textRadius, 0);
+            this.ctx.rotate(Math.PI / 2); // Rotate text to be readable
+            
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
             this.ctx.fillStyle = '#fff';
             this.ctx.font = 'bold 16px Arial';
-            this.ctx.fillText(this.members[i], radius - 20, 5);
+            this.ctx.fillText(this.members[i], 0, 0);
             this.ctx.restore();
         }
     }
 
     spin() {
         if (this.isSpinning || this.members.length === 0) return;
+
+        // Reset the wheel's position before spinning
+        this.rotation = 0;
+        this.draw();
 
         this.isSpinning = true;
         const spinButton = document.getElementById('spinButton');
@@ -100,12 +112,15 @@ class Wheel {
                 spinButton.disabled = false;
                 
                 // Calculate the selected member
-                const normalizedRotation = this.rotation % (2 * Math.PI);
                 const sliceAngle = (2 * Math.PI) / this.members.length;
-                const selectedIndex = Math.floor(
-                    normalizedRotation / sliceAngle
-                ) % this.members.length;
-                
+
+                // Adjust the rotation to align with the pointer
+                const pointerOffset = Math.PI / 2; // Assuming the pointer is at the top (90 degrees)
+                const normalizedRotation = (2 * Math.PI + this.rotation - pointerOffset) % (2 * Math.PI);
+
+                // Calculate the selected index
+                const selectedIndex = Math.floor(normalizedRotation / sliceAngle) % this.members.length;
+
                 const selectedMember = this.members[selectedIndex];
                 const result = document.getElementById('result');
                 result.textContent = `Selected: ${selectedMember}`;
@@ -313,4 +328,4 @@ document.getElementById('deleteWheel').addEventListener('click', () => {
     } else {
         wheel.showNotification('Please select a wheel to delete', 'error');
     }
-}); 
+});
