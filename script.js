@@ -103,7 +103,7 @@ class Wheel {
                 const normalizedRotation = this.rotation % (2 * Math.PI);
                 const sliceAngle = (2 * Math.PI) / this.members.length;
                 const selectedIndex = Math.floor(
-                    (2 * Math.PI - normalizedRotation) / sliceAngle
+                    normalizedRotation / sliceAngle
                 ) % this.members.length;
                 
                 const selectedMember = this.members[selectedIndex];
